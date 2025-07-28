@@ -4,7 +4,7 @@
   "required": [
     "tenant_id",
     "client_id",
-    "client_secret"
+    "#client_secret"
   ],
   "properties": {
     "tenant_id": {
@@ -17,7 +17,7 @@
       "title": "Application (client) ID",
       "propertyOrder": 2
     },
-    "client_secret": {
+    "#client_secret": {
       "type": "string",
       "title": "Client Secret",
       "format": "password",

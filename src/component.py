@@ -58,7 +58,7 @@ class Component(ComponentBase):
         token = self.get_access_token(config)
         users = self.get_all_users(token)
 
-        print(f"🔍 Načteno {len(users)} uživatelů.")
+        print(f"Loaded {len(users)} users.")
 
         output_rows = []
         for user in users:
@@ -98,7 +98,7 @@ class Component(ComponentBase):
             writer.writeheader()
             writer.writerows(output_rows)
 
-        print(f"✅ Data byla uložena do {output_path}")
+        print(f"Downloaded")
 
 
 if __name__ == "__main__":
