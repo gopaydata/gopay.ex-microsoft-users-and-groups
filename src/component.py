@@ -3,7 +3,7 @@ import json
 import csv
 import os
 
-# Načtení konfigurace z Keboola `data/config.json`
+
 def load_config():
     with open("/data/config.json", encoding="utf-8") as f:
         cfg = json.load(f)
@@ -13,6 +13,7 @@ def load_config():
         "client_id": parameters["client_id"],
         "client_secret": parameters["client_secret"]
     }
+
 
 def get_access_token(config):
     url = f"https://login.microsoftonline.com/{config['tenant_id']}/oauth2/v2.0/token"
@@ -27,6 +28,7 @@ def get_access_token(config):
     response.raise_for_status()
     return response.json()["access_token"]
 
+
 def get_all_users(access_token):
     users = []
     url = "https://graph.microsoft.com/v1.0/users"
@@ -39,6 +41,7 @@ def get_all_users(access_token):
         url = data.get("@odata.nextLink")
     return users
 
+
 def get_user_licenses(access_token, user_id):
     url = f"https://graph.microsoft.com/v1.0/users/{user_id}/licenseDetails"
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -46,12 +49,14 @@ def get_user_licenses(access_token, user_id):
     response.raise_for_status()
     return response.json().get("value", [])
 
+
 def get_user_groups(access_token, user_id):
     url = f"https://graph.microsoft.com/v1.0/users/{user_id}/memberOf"
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json().get("value", [])
+
 
 def main():
     config = load_config()
@@ -82,17 +87,24 @@ def main():
             "Groups": group_names
         })
 
-    # Výstupní cesta v Keboola prostředí
     output_path = "/data/out/tables/users_summary.csv"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     with open(output_path, mode="w", newline="", encoding="utf-8") as f:
-        fieldnames = ["Display Name", "User Principal Name", "ID", "Account Enabled", "Licenses", "Groups"]
+        fieldnames = [
+            "Display Name",
+            "User Principal Name",
+            "ID",
+            "Account Enabled",
+            "Licenses",
+            "Groups"
+        ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(output_rows)
 
     print(f"Data byla uložena do {output_path}")
+
 
 if __name__ == "__main__":
     main()

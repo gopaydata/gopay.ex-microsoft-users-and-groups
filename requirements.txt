@@ -5,3 +5,7 @@ keboola.utils
 # keboola.http-client
 mock
 freezegun
+json
+csv
+os
+requests
