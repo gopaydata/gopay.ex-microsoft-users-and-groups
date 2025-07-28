@@ -8,7 +8,7 @@ import mock
 import os
 from freezegun import freeze_time
 
-import component
+from component import main
 
 
 class TestComponent(unittest.TestCase):
