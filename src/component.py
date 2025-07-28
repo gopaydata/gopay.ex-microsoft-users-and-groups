@@ -98,7 +98,7 @@ class Component(ComponentBase):
             writer.writeheader()
             writer.writerows(output_rows)
 
-        print(f"Downloaded")
+        print("Data downloaded")
 
 
 if __name__ == "__main__":
