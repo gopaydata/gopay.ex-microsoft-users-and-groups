@@ -104,4 +104,3 @@ class Component(ComponentBase):
 if __name__ == "__main__":
     component = Component()
     component.run()
-    
