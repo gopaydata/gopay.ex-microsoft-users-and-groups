@@ -52,7 +52,7 @@ class Component(ComponentBase):
         config = {
             "tenant_id": self.configuration.parameters["tenant_id"],
             "client_id": self.configuration.parameters["client_id"],
-            "client_secret": self.configuration.parameters["client_secret"]
+            "client_secret": self.configuration.parameters["#client_secret"]
         }
 
         token = self.get_access_token(config)
