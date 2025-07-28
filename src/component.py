@@ -1,9 +1,7 @@
 import requests
-import json
 import csv
 import os
 from keboola.component.base import ComponentBase
-from keboola.component.exceptions import UserException
 
 
 class Component(ComponentBase):
