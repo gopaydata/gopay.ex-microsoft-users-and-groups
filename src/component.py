@@ -98,9 +98,10 @@ class Component(ComponentBase):
             writer.writeheader()
             writer.writerows(output_rows)
 
-        print(f"Data byla uložena do {output_path}")
+        print(f"✅ Data byla uložena do {output_path}")
 
 
 if __name__ == "__main__":
     component = Component()
     component.run()
+
