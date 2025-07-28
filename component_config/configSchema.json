@@ -1,19 +1,27 @@
 {
   "type": "object",
-  "title": "extractor configuration",
+  "title": "Graph User Lookup configuration",
   "required": [
-    "print_hello"
+    "tenant_id",
+    "client_id",
+    "client_secret"
   ],
   "properties": {
-    "print_hello": {
-      "type": "boolean",
-      "title": "Print Hello",
+    "tenant_id": {
+      "type": "string",
+      "title": "Azure Tenant ID",
       "propertyOrder": 1
     },
-    "debug": {
-      "type": "boolean",
-      "title": "Debug",
+    "client_id": {
+      "type": "string",
+      "title": "Application (client) ID",
       "propertyOrder": 2
+    },
+    "client_secret": {
+      "type": "string",
+      "title": "Client Secret",
+      "format": "password",
+      "propertyOrder": 3
     }
   }
 }
