@@ -18,35 +18,42 @@ class Component(ComponentBase):
             "client_secret": config["client_secret"],
             "grant_type": "client_credentials"
         }
+
         response = requests.post(url, headers=headers, data=data)
         response.raise_for_status()
         return response.json()["access_token"]
 
-    def get_all_users(self, access_token):
-        users = []
-        url = "https://graph.microsoft.com/v1.0/users"
+    def graph_get_all_pages(self, access_token, url):
+        items = []
         headers = {"Authorization": f"Bearer {access_token}"}
+
         while url:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
+
             data = response.json()
-            users.extend(data.get("value", []))
+            items.extend(data.get("value", []))
             url = data.get("@odata.nextLink")
-        return users
+
+        return items
+
+    def get_all_users(self, access_token):
+        url = (
+            "https://graph.microsoft.com/v1.0/users"
+            "?$select=id,displayName,userPrincipalName,accountEnabled"
+        )
+        return self.graph_get_all_pages(access_token, url)
 
     def get_user_licenses(self, access_token, user_id):
         url = f"https://graph.microsoft.com/v1.0/users/{user_id}/licenseDetails"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json().get("value", [])
+        return self.graph_get_all_pages(access_token, url)
 
     def get_user_groups(self, access_token, user_id):
-        url = f"https://graph.microsoft.com/v1.0/users/{user_id}/memberOf"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json().get("value", [])
+        url = (
+            f"https://graph.microsoft.com/v1.0/users/{user_id}/memberOf"
+            "?$select=id,displayName"
+        )
+        return self.graph_get_all_pages(access_token, url)
 
     def run(self):
         config = {
@@ -61,17 +68,26 @@ class Component(ComponentBase):
         print(f"Loaded {len(users)} users.")
 
         output_rows = []
+
         for user in users:
             user_id = user.get("id")
-            display_name = user.get("displayName")
-            upn = user.get("userPrincipalName")
+            display_name = user.get("displayName") or ""
+            upn = user.get("userPrincipalName") or ""
             account_enabled = user.get("accountEnabled")
 
             licenses = self.get_user_licenses(token, user_id)
             groups = self.get_user_groups(token, user_id)
 
-            license_names = ", ".join([lic.get("skuPartNumber", "") for lic in licenses])
-            group_names = ", ".join([g.get("displayName", "") for g in groups])
+            license_names = ", ".join([
+                lic.get("skuPartNumber") or ""
+                for lic in licenses
+                if lic.get("skuPartNumber")
+            ])
+
+            group_names = ", ".join([
+                g.get("displayName") or g.get("id") or "unknown"
+                for g in groups
+            ])
 
             output_rows.append({
                 "Display Name": display_name,
